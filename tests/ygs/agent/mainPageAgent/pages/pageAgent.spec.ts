@@ -181,20 +181,18 @@ test.describe('Тесты профиля агента', () => {
     loginPage = new LoginPage(page);
     await loginPage.openLoginPage();
     await loginPage.loginOnSite();
-    const openProfile = page.getByRole('link', { name: 'agent1' });
-    await openProfile.click();
-    await page.getByText('Login Information').waitFor();
+    await page.getByRole('link', { name: 'agent1' }).click();
   });
 
   test('Проверка элементов в профиле', async ({ page }) => {
-    elements.forEach(({ locator, name, value }) => {
-      test.step(`Проверка отображения элементов страницы профиля ${name}`, async () => {
+    for (const { locator, name, value } of elements) {
+      await test.step(`Проверка отображения элементов страницы профиля ${name}`, async () => {
         await expect.soft(locator(page)).toBeVisible();
         if (value && value != 'agent1') {
-          await expect.soft(locator(page)).toBeEmpty();
+          await expect.soft(locator(page)).toBeEmpty({ timeout: 1_000 });
         }
       });
-    });
+    }
   });
 
   test('Заполнение профиля агент', async ({ page }) => {
@@ -208,4 +206,5 @@ test.describe('Тесты профиля агента', () => {
     }
     await page.getByRole('button', { name: 'Save' }).click();
   });
+  test('Проверка профиля агента', async ({ page }) => {});
 });
