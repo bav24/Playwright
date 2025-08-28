@@ -83,7 +83,7 @@ export class LoginPage {
   }
 
   async openLoginPage() {
-    await this.page.goto('https://ygs-66-d2.demoenv.dev/agent/#LOGIN');
+    await this.page.goto('https://ygs-66-test.t2.cgames.dev/agent/#LOGIN');
     await this.page.getByRole('combobox').selectOption('English');
   }
 
