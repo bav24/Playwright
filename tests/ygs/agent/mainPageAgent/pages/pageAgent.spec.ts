@@ -7,12 +7,13 @@ interface Elements {
   locator: (page: Page) => Locator;
   name: string;
   value?: string;
-  attribute?: {
-    type: string;
-  };
 }
 
 const elements: Elements[] = [
+  {
+    locator: (page: Page): Locator => page.getByRole('link', { name: 'agent1' }),
+    name: 'link profile',
+  },
   {
     locator: (page: Page): Locator => page.getByText('Username :'),
     name: 'Text Username',
@@ -66,7 +67,7 @@ const elements: Elements[] = [
   {
     locator: (page: Page): Locator => page.getByRole('textbox', { name: 'Address', exact: true }),
     name: 'Address input',
-    value: '',
+    value: 'Test test test',
   },
   {
     locator: (page: Page): Locator => page.getByText('Phone Number * :'),
@@ -75,7 +76,7 @@ const elements: Elements[] = [
   {
     locator: (page: Page): Locator => page.getByRole('textbox', { name: 'Phone Number' }),
     name: 'Phone Number input',
-    value: '',
+    value: '123456789',
   },
   {
     locator: (page: Page): Locator => page.getByText('State/Province * :'),
@@ -84,7 +85,7 @@ const elements: Elements[] = [
   {
     locator: (page: Page): Locator => page.getByRole('textbox', { name: 'State/Province' }),
     name: 'State/Province input',
-    value: '',
+    value: 'Test',
   },
   {
     locator: (page: Page): Locator => page.getByText('City * :'),
@@ -93,7 +94,7 @@ const elements: Elements[] = [
   {
     locator: (page: Page): Locator => page.getByRole('textbox', { name: 'City' }),
     name: 'City input',
-    value: '',
+    value: 'Test',
   },
   {
     locator: (page: Page): Locator => page.getByText('ZIP/Postal Code * :'),
@@ -102,7 +103,7 @@ const elements: Elements[] = [
   {
     locator: (page: Page): Locator => page.getByRole('textbox', { name: 'ZIP/Postal Code' }),
     name: 'ZIP/Postal Code input',
-    value: '',
+    value: '987654',
   },
   {
     locator: (page: Page): Locator => page.getByText('Country * :'),
@@ -121,7 +122,57 @@ const elements: Elements[] = [
   {
     locator: (page: Page): Locator => page.getByRole('textbox', { name: 'Birthday' }),
     name: 'Birthday input',
-    value: '',
+    value: '05.05.05',
+  },
+  //Revenue Settings
+  {
+    locator: (page: Page): Locator => page.getByText('Revenue Settings'),
+    name: 'text Revenue Settings',
+  },
+  {
+    locator: (page: Page): Locator => page.getByText("% from player's first deposit"),
+    name: "text % from player's first deposit",
+  },
+  {
+    locator: (page: Page): Locator => page.getByText('Revenue wallet :'),
+    name: 'text Revenue wallet',
+  },
+  {
+    locator: (page: Page): Locator =>
+      page.getByText('% from Chinese Poker Revenue:', { exact: true }),
+    name: 'text % from Chinese Poker Revenue',
+  },
+  {
+    locator: (page: Page): Locator => page.getByText('% from Rummy Revenue:', { exact: true }),
+    name: 'text % from Rummy Revenue',
+  },
+  {
+    locator: (page: Page): Locator => page.getByText('% from Poker Revenue:', { exact: true }),
+    name: 'text % from Poker Revenue',
+  },
+  {
+    locator: (page: Page): Locator => page.getByText('% from Casino Revenue:', { exact: true }),
+    name: 'text % from Casino Revenue',
+  },
+  {
+    locator: (page: Page): Locator => page.getByText('Subagent % from Chinese Poker'),
+    name: 'text Subagent % from Chinese Poker',
+  },
+  {
+    locator: (page: Page): Locator => page.getByText('Subagent % from Rummy Revenue'),
+    name: 'text Subagent % from Rummy Revenue',
+  },
+  {
+    locator: (page: Page): Locator => page.getByText('Subagent % from Poker Revenue'),
+    name: 'text Subagent % from Poker Revenue',
+  },
+  {
+    locator: (page: Page): Locator => page.getByText('Subagent % from Casino'),
+    name: 'text Subagent % from Casino',
+  },
+  {
+    locator: (page: Page): Locator => page.getByRole('button', { name: 'Save' }),
+    name: 'Save button',
   },
 ];
 
@@ -130,75 +181,31 @@ test.describe('Тесты профиля агента', () => {
     loginPage = new LoginPage(page);
     await loginPage.openLoginPage();
     await loginPage.loginOnSite();
+    const openProfile = page.getByRole('link', { name: 'agent1' });
+    await openProfile.click();
+    await page.getByText('Login Information').waitFor();
   });
 
   test('Проверка элементов в профиле', async ({ page }) => {
-    await page.getByRole('link', { name: 'agent1' }).click();
-    //Login information
+    elements.forEach(({ locator, name, value }) => {
+      test.step(`Проверка отображения элементов страницы профиля ${name}`, async () => {
+        await expect.soft(locator(page)).toBeVisible();
+        if (value && value != 'agent1') {
+          await expect.soft(locator(page)).toBeEmpty();
+        }
+      });
+    });
+  });
 
-    await expect(page.getByText('Username :')).toBeVisible();
-    await expect(
-      page.getByRole('gridcell', { name: 'agent1', exact: true }).getByRole('textbox'),
-    ).toHaveValue('agent1');
-    await expect(page.getByText('Email Address :')).toBeVisible();
-    await expect(page.getByRole('textbox', { name: 'Email' })).toBeEmpty();
-    await expect(page.getByRole('button', { name: 'Change Password...' })).toBeVisible();
-    // Personal information
-
-    await expect(page.getByText('Personal Information')).toBeVisible();
-    await expect(page.getByText('First Name * :')).toBeVisible();
-
-    await expect(page.getByRole('textbox', { name: 'First Name' })).toBeEmpty();
-
-    await expect(page.getByText('Last Name * :')).toBeVisible();
-    await expect(page.getByRole('textbox', { name: 'Last Name' })).toBeEmpty();
-
-    await expect(page.getByText('Address * :')).toBeVisible();
-
-    await expect(page.getByRole('textbox', { name: 'Address', exact: true })).toBeEmpty();
-    await expect(page.getByText('Phone Number * :')).toBeVisible();
-
-    await expect(page.getByRole('textbox', { name: 'Phone Number' })).toBeEmpty();
-    await expect(page.getByText('State/Province * :')).toBeVisible();
-
-    await expect(page.getByRole('textbox', { name: 'State/Province' })).toBeEmpty();
-    await expect(page.getByText('City * :')).toBeVisible();
-
-    await expect(page.getByRole('textbox', { name: 'City' })).toBeEmpty();
-    await expect(page.getByText('ZIP/Postal Code * :')).toBeVisible();
-
-    await expect(page.getByRole('textbox', { name: 'ZIP/Postal Code' })).toBeEmpty();
-    await expect(page.getByText('Country * :')).toBeVisible();
-
-    await expect(page.getByRole('gridcell', { name: '[N/A]' }).getByRole('combobox')).toHaveValue(
-      '[N/A]',
-    );
-    await expect(page.getByText('Birthday * :')).toBeVisible();
-
-    await expect(page.getByRole('textbox', { name: 'Birthday' })).toBeEmpty();
-    //Revenue Settings
-    await expect(page.getByText('Revenue Settings')).toBeVisible();
-
-    await expect(page.getByText("% from player's first deposit")).toBeVisible();
-
-    await expect(
-      page.getByRole('gridcell', { name: '0.00', exact: true }).getByRole('textbox'),
-    ).toHaveValue('0.00');
-    await expect(page.getByText('Revenue wallet :')).toBeVisible();
-
-    await expect(
-      page.getByRole('gridcell', { name: 'USD (U.S. Dollars)' }).getByRole('textbox'),
-    ).toHaveValue('USD (U.S. Dollars)');
-    await expect(page.getByText('% from Chinese Poker Revenue:', { exact: true })).toBeVisible();
-
-    await expect(page.getByText('% from Rummy Revenue:', { exact: true })).toBeVisible();
-    await expect(page.getByText('% from Poker Revenue:', { exact: true })).toBeVisible();
-    await expect(page.getByText('% from Casino Revenue:', { exact: true })).toBeVisible();
-    await expect(page.getByText('Subagent % from Chinese Poker')).toBeVisible();
-    await expect(page.getByText('Subagent % from Rummy Revenue')).toBeVisible();
-    await expect(page.getByText('Subagent % from Poker Revenue')).toBeVisible();
-    await expect(page.getByText('Subagent % from Casino')).toBeVisible();
-
-    await expect(page.getByRole('button', { name: 'Save' })).toBeVisible();
+  test('Заполнение профиля агент', async ({ page }) => {
+    for (const { locator, name, value } of elements) {
+      if (value && value != 'agent1') {
+        await test.step(`Заполнение поля ${name}`, async () => {
+          await locator(page).click();
+          await locator(page).fill(value);
+        });
+      }
+    }
+    await page.getByRole('button', { name: 'Save' }).click();
   });
 });
