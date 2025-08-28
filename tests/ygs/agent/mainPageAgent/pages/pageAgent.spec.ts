@@ -176,6 +176,7 @@ const elements: Elements[] = [
   },
 ];
 
+test.describe.configure({ mode: 'default' });
 test.describe('Тесты профиля агента', () => {
   test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page);

@@ -14,7 +14,7 @@ import { defineConfig, devices } from '@playwright/test';
 export default defineConfig({
   testDir: './tests',
   snapshotPathTemplate: '{testDir}/screenshots/{testFilePath}/{arg}{ext}',
-  timeout: 120_000,
+  timeout: 60_000,
 
   /* Run tests in files in parallel */
   fullyParallel: true,

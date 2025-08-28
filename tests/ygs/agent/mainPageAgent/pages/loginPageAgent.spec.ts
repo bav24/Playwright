@@ -3,6 +3,7 @@ import { LoginPage } from '../models/loginPageAgent';
 
 let loginPage: LoginPage;
 
+test.describe.configure({ mode: 'default' });
 test.describe('Тесты страницы логина', () => {
   test.beforeEach(async ({ page }) => {
     loginPage = new LoginPage(page);
