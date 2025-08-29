@@ -85,7 +85,7 @@ const elements: Elements[] = [
   {
     locator: (page: Page): Locator => page.getByRole('textbox', { name: 'State/Province' }),
     name: 'State/Province input',
-    value: 'Test',
+    value: 'Testaaa',
   },
   {
     locator: (page: Page): Locator => page.getByText('City * :'),
@@ -94,7 +94,7 @@ const elements: Elements[] = [
   {
     locator: (page: Page): Locator => page.getByRole('textbox', { name: 'City' }),
     name: 'City input',
-    value: 'Test',
+    value: 'Testeee',
   },
   {
     locator: (page: Page): Locator => page.getByText('ZIP/Postal Code * :'),
@@ -113,7 +113,7 @@ const elements: Elements[] = [
     locator: (page: Page): Locator =>
       page.getByRole('gridcell', { name: '[N/A]' }).getByRole('combobox'),
     name: 'Country combobox',
-    value: '',
+    value: 'Argentina',
   },
   {
     locator: (page: Page): Locator => page.getByText('Birthday * :'),
@@ -198,14 +198,21 @@ test.describe('Тесты профиля агента', () => {
 
   test('Заполнение профиля агент', async ({ page }) => {
     for (const { locator, name, value } of elements) {
-      if (value && value != 'agent1') {
+      if (value && value != 'agent1' && value != 'Argentina') {
         await test.step(`Заполнение поля ${name}`, async () => {
           await locator(page).click();
           await locator(page).fill(value);
         });
+      } else if (value && value == 'Argentina') {
+        await test.step(`Заполенение поля ${name}`, async () => {
+          await locator(page).selectOption(value);
+        });
       }
     }
-    await page.getByRole('button', { name: 'Save' }).click();
+    await test.step('Сохрание данных', async () => {
+      await page.getByRole('button', { name: 'Save' }).click();
+      await expect(page.getByText('Changes saved')).toBeVisible();
+    });
   });
   test('Проверка профиля агента', async ({ page }) => {});
 });
