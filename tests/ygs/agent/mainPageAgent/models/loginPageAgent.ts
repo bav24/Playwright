@@ -114,14 +114,14 @@ export class LoginPage {
         });
       }
     }
-    await expect(this.page.getByRole('button', { name: 'Logout' })).toBeVisible();
+    await expect.soft(this.page.getByRole('button', { name: 'Logout' })).toBeVisible();
   }
 
   async logoutSite() {
-    this.page.getByRole('button', { name: 'Logout' }).click();
+    await this.page.getByRole('button', { name: 'Logout' }).click();
   }
 
   async checkUsernameField() {
-    await expect(this.page.getByRole('textbox', { name: 'Username' })).toHaveValue('agent1');
+    await expect.soft(this.page.getByRole('textbox', { name: 'Username' })).toHaveValue('agent1');
   }
 }
